@@ -1,4 +1,7 @@
 from django.urls import path
-from .views import all_todos, todo_details_view
+from .views import TodoAPIClass, TodoDetailAPIClass
 
-urlpatterns = [path("", all_todos), path("<int:todo_id>", todo_details_view)]
+urlpatterns = [
+    path("", TodoAPIClass.as_view()),
+    path("<int:todo_id>", TodoDetailAPIClass.as_view()),
+]

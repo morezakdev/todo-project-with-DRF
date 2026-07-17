@@ -6,6 +6,14 @@ from rest_framework.response import Response
 from .models import todoModel
 from .serializes import todoserializer
 from rest_framework.views import APIView
+from rest_framework.mixins import (
+    DestroyModelMixin,
+    CreateModelMixin,
+    RetrieveModelMixin,
+    ListModelMixin,
+    UpdateModelMixin,
+)
+from rest_framework.generics import GenericAPIView
 
 # Create your views here.
 
@@ -48,43 +56,70 @@ from rest_framework.views import APIView
 
 
 # api_in_function_base_view
-class TodoAPIClass(APIView):
-    def get(self, request: Request):
-        todo = list(todoModel.objects.order_by("privory").all())
-        todoSerializer = todoserializer(todo, many=True)
-        return Response(todoSerializer.data, status.HTTP_200_OK)
+# class TodoAPIClass(APIView):
+#     def get(self, request: Request):
+#         todo = list(todoModel.objects.order_by("privory").all())
+#         todoSerializer = todoserializer(todo, many=True)
+#         return Response(todoSerializer.data, status.HTTP_200_OK)
 
-    def post(self, request: Request):
-        serializer = todoserializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-        return Response(serializer.data, status.HTTP_201_CREATED)
+#     def post(self, request: Request):
+#         serializer = todoserializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#         return Response(serializer.data, status.HTTP_201_CREATED)
 
 
-class TodoDetailAPIClass(APIView):
-    def get_todo_object(self, todo_id: int):
-        try:
-            todo = todoModel.objects.get(pk=todo_id)
-            return todo
-        except todoModel.DoesNotExist:
-            return Response(None, status.HTTP_404_NOT_FOUND)
+# class TodoDetailAPIClass(APIView):
+#     def get_todo_object(self, todo_id: int):
+#         try:
+#             todo = todoModel.objects.get(pk=todo_id)
+#             return todo
+#         except todoModel.DoesNotExist:
+#             return Response(None, status.HTTP_404_NOT_FOUND)
 
-    def get(self, request: Request, todo_id: int):
-        todo = self.get_todo_object(todo_id)
-        serializer = todoserializer(todo)
-        return Response(serializer.data, status.HTTP_200_OK)
+#     def get(self, request: Request, todo_id: int):
+#         todo = self.get_todo_object(todo_id)
+#         serializer = todoserializer(todo)
+#         return Response(serializer.data, status.HTTP_200_OK)
 
-    def put(self, request: Request, todo_id: int):
-        todo = self.get_todo_object(todo_id)
-        serializer = todoserializer(todo, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status.HTTP_202_ACCEPTED)
+#     def put(self, request: Request, todo_id: int):
+#         todo = self.get_todo_object(todo_id)
+#         serializer = todoserializer(todo, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status.HTTP_202_ACCEPTED)
 
-    def delete(self, request: Request, todo_id: int):
-        todo = self.get_todo_object(todo_id)
-        todo.delete()
-        return Response(None, status.HTTP_200_OK)
+#     def delete(self, request: Request, todo_id: int):
+#         todo = self.get_todo_object(todo_id)
+#         todo.delete()
+#         return Response(None, status.HTTP_200_OK)
 
 
 # end comment
+
+
+class TodoMixinAPIClass(ListModelMixin, CreateModelMixin, GenericAPIView):
+    queryset = todoModel.objects.order_by("privory").all()
+    serializer_class = todoserializer
+
+    def get(self, request: Request):
+        return self.list(request)
+
+    def post(self, request: Request):
+        return self.create(request)
+
+
+class TodoMixinDetailAPIClass(
+    ListModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView
+):
+    queryset = todoModel.objects.order_by("privory").all()
+    serializer_class = todoserializer
+
+    def get(self, request: Request, pk):
+        return self.list(request, pk)
+
+    def put(self, request: Request, pk):
+        return self.update(request, pk)
+
+    def delete(self, request: Request, pk):
+        return self.destroy(request, pk)

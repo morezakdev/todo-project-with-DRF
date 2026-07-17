@@ -13,7 +13,11 @@ from rest_framework.mixins import (
     ListModelMixin,
     UpdateModelMixin,
 )
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import (
+    GenericAPIView,
+    RetrieveUpdateDestroyAPIView,
+    ListCreateAPIView,
+)
 
 # Create your views here.
 
@@ -98,28 +102,38 @@ from rest_framework.generics import GenericAPIView
 # end comment
 
 
-class TodoMixinAPIClass(ListModelMixin, CreateModelMixin, GenericAPIView):
+# class TodoMixinAPIClass(ListModelMixin, CreateModelMixin, GenericAPIView):
+#     queryset = todoModel.objects.order_by("privory").all()
+#     serializer_class = todoserializer
+
+#     def get(self, request: Request):
+#         return self.list(request)
+
+#     def post(self, request: Request):
+#         return self.create(request)
+
+
+# class TodoMixinDetailAPIClass(
+#     RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView
+# ):
+#     queryset = todoModel.objects.order_by("privory").all()
+#     serializer_class = todoserializer
+
+#     def get(self, request: Request, pk):
+#         return self.retrieve(request, pk)
+
+#     def put(self, request: Request, pk):
+#         return self.update(request, pk)
+
+#     def delete(self, request: Request, pk):
+#         return self.destroy(request, pk)
+
+
+class TodoGenericAPIClass(ListCreateAPIView):
     queryset = todoModel.objects.order_by("privory").all()
     serializer_class = todoserializer
 
-    def get(self, request: Request):
-        return self.list(request)
 
-    def post(self, request: Request):
-        return self.create(request)
-
-
-class TodoMixinDetailAPIClass(
-    ListModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView
-):
+class TodoGenericDetailAPIClass(RetrieveUpdateDestroyAPIView):
     queryset = todoModel.objects.order_by("privory").all()
     serializer_class = todoserializer
-
-    def get(self, request: Request, pk):
-        return self.list(request, pk)
-
-    def put(self, request: Request, pk):
-        return self.update(request, pk)
-
-    def delete(self, request: Request, pk):
-        return self.destroy(request, pk)

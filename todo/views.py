@@ -19,6 +19,8 @@ from rest_framework.generics import (
     ListCreateAPIView,
 )
 
+from rest_framework import viewsets
+
 # Create your views here.
 
 
@@ -129,11 +131,15 @@ from rest_framework.generics import (
 #         return self.destroy(request, pk)
 
 
-class TodoGenericAPIClass(ListCreateAPIView):
-    queryset = todoModel.objects.order_by("privory").all()
-    serializer_class = todoserializer
+# class TodoGenericAPIClass(ListCreateAPIView):
+#     queryset = todoModel.objects.order_by("privory").all()
+#     serializer_class = todoserializer
 
 
-class TodoGenericDetailAPIClass(RetrieveUpdateDestroyAPIView):
+# class TodoGenericDetailAPIClass(RetrieveUpdateDestroyAPIView):
+#     queryset = todoModel.objects.order_by("privory").all()
+#     serializer_class = todoserializer
+
+class TodoViweSetAPIClass(viewsets.ModelViewSet):
     queryset = todoModel.objects.order_by("privory").all()
     serializer_class = todoserializer
